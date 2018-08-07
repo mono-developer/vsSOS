@@ -1,0 +1,142 @@
+page-push-popup {
+	.push-popup-div {
+		background-color: white;
+		position: absolute;
+		left: 50%;
+		-webkit-transform: translateX(-50%);
+		transform: translateX(-50%);
+		width: 85%;
+		border-radius: 10px;
+		padding: 4rem 4rem;
+		top: 7%;
+
+		.bag-img-div {
+			width: 15rem;
+			margin-left: 50%;
+			transform: translateX(-50%);
+			position: relative;
+
+			.bag-img {
+				border-radius: 8px;
+			}
+
+			.notification-icon {
+				width: 2.2rem;
+				height: 2.2rem;
+				border-radius: 50%;
+				background-color: red;
+				position: absolute;
+				right: -0.8rem;
+				top: -0.8rem;
+			}
+		}
+
+		.content-div {
+			width: 220px;
+			margin-left: 50%;
+			transform: translate(-50%);
+
+			.title {
+				color: #666666;
+				font-family: "Open Sans";
+				font-size: 20px;
+				line-height: 7px;
+			}
+
+			.item-div {
+				display: flex;
+				align-items: center;
+				height: 2.8rem;
+				/*justify-content: center;*/
+
+				.image {
+					width: 1.8rem;
+					height: 1.8rem;
+					border-radius: 50%;
+				}
+
+				.first {
+					background-color: #3986C5;
+					border-color: #7DB2DA;
+					border-width: 3px;
+					border-style: solid;
+				}
+
+				.second {
+					background-color: #4DAFBA;
+					border-color: #7DCCD4;
+					border-width: 3px;
+					border-style: solid; 
+				}
+
+				.third {
+					background-color: #EF8057;
+					border-color: #F5B79F;
+					border-width: 3px;
+					border-style: solid;
+				}
+
+				.fourth {
+					background-color: #EC5766;
+					border-color: #F094A0;
+					border-width: 3px;
+					border-style: solid;
+				}
+
+				p {
+					margin-left: 1rem;
+					color: #666666;
+					font-family: "Open Sans";
+					font-size: 16px;
+					line-height: 10px;
+				}
+			}
+		}
+
+		
+
+		.lets-div {
+			position: relative;
+			height: 5rem;
+			margin-top: 3rem;
+
+			.lets-btn {
+				position: absolute;
+				height: 4rem;
+				width: 100%;
+			}
+
+			.lets-txt {
+				position: absolute;
+				color: white;
+				left: 50%;
+				transform: translateX(-50%);
+				font-size: 1.5rem;
+				line-height: 10px;
+			}
+		}
+
+		.buttons-div {
+			position: relative;
+
+			.deny-btn {
+				width: 50%;
+			  text-align: center;
+			  font-size: 1.5rem;
+			  color: #2872A2;
+			  background-color: white;
+			  height: 3rem;
+			}
+			.accept-btn {
+				position: absolute;
+				width: 50%;
+			  text-align: center;
+			  font-size: 1.5rem;
+			  color: #2872A2;
+			  background-color: white;
+			  height: 3rem;
+			}
+		}
+		
+	}
+}
