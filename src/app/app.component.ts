@@ -132,6 +132,24 @@ export class MyApp {
       // Here you can do any higher level native things you might need.
       statusBar.hide();
 
+      /** Deep Link Start */
+
+      this.deeplinks.routeWithNavController(this.nav, {
+          "/empwoser": "EmpowerPage",
+          "/login": "LoginPage",
+          "/signup": "SignupPage"
+        })
+        .subscribe(match => {
+          // match.$route - the route we matched, which is the matched entry from the arguments to route()
+          // match.$args - the args passed in the link
+          // match.$link - the full link data
+          console.log("Successfully matched route", JSON.stringify(match));
+        }, nomatch => {
+          // nomatch.$link - the full link data
+          console.error("Got a deeplink that didn't match", nomatch);
+        });
+    /** DeepLink End */
+
       let isDebug = false;
 
       if (this.platform.is("cordova")) {
@@ -221,23 +239,6 @@ export class MyApp {
       });
     });
 
-    /** Deep Link Start */
-
-    this.deeplinks
-      .route({
-        "/empwoser": "EmpowerPage",
-        "/login": "LoginPage",
-        "/signup": "SignupPage"
-      })
-      .subscribe(match => {
-          // match.$route - the route we matched, which is the matched entry from the arguments to route()
-          // match.$args - the args passed in the link
-          // match.$link - the full link data
-          console.log("Successfully matched route", match);
-        }, nomatch => {
-          // nomatch.$link - the full link data
-          console.error("Got a deeplink that didn't match", nomatch);
-        });
-    /** DeepLink End */
+    
   }
 }
