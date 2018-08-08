@@ -8,20 +8,20 @@ import validate from 'validate.js';
 
 @IonicPage()
 @Component({
-  selector: 'page-signup',
-  templateUrl: 'signup.html',
+  selector: "page-signup",
+  templateUrl: "signup.html"
 })
 export class SignupPage {
-
   firstName: string;
   lastName: string;
   email: string;
   password: string;
+  inviteCode: string;
   confirmPassword: string;
   signupFinished = false;
 
   errorToast: Toast;
-  
+
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -29,19 +29,19 @@ export class SignupPage {
     private toastController: ToastController,
     private fb: Facebook,
     public storage: Storage,
-    public platform: Platform,
-  ) { }
+    public platform: Platform
+  ) {}
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad LoginPage');
+    console.log("ionViewDidLoad LoginPage");
     // redirect to empower page for logged in users
-    if(this.isLoggedIn()) {
-      this.navCtrl.setPages([{ page: 'EmpowerPage' }]);
+    if (this.isLoggedIn()) {
+      this.navCtrl.setPages([{ page: "EmpowerPage" }]);
     }
   }
 
   ionViewWillLeave() {
-    if(this.errorToast) {
+    if (this.errorToast) {
       this.errorToast.dismissAll();
     }
   }
@@ -66,130 +66,152 @@ export class SignupPage {
     this.password = change;
   }
 
+  inviteCodeChanged(change) {
+    this.inviteCode = change;
+  }
+
   signupWithFacebook() {
-    this.fb.login(['public_profile', 'email'])
+    this.fb
+      .login(["public_profile", "email"])
       .then((fbres: FacebookLoginResponse) => {
         // log into api with response
-        if(fbres.authResponse) {
-          this.sessionService.facebook(fbres.authResponse.accessToken)
+        if (fbres.authResponse) {
+          this.sessionService
+            .facebook(fbres.authResponse.accessToken)
             .subscribe(res => {
-              if(res['status'] === 'success' || res['success'] === true) {
+              if (res["status"] === "success" || res["success"] === true) {
                 // redirect to empower page
-                this.navCtrl.setRoot('PushPopupPage');
+                this.navCtrl.setRoot("PushPopupPage");
               } else {
-                this.showError('There was an error signing up with Facebook.');
+                this.showError("There was an error signing up with Facebook.");
               }
             });
         } else {
           // let the catch below handle it
-          throw new Error('Invalid FB Response');
+          throw new Error("Invalid FB Response");
         }
       })
       .catch(e => {
-        console.log('Error signing up with Facebook', e);
-        this.showError('There was an error signing up with Facebook.');
+        console.log("Error signing up with Facebook", e);
+        this.showError("There was an error signing up with Facebook.");
       });
-
   }
 
   signup() {
-
     // perform validation
     const constraints = {
       firstName: {
         presence: {
-          allowEmpty: false,
-        },
+          allowEmpty: false
+        }
       },
       lastName: {
         presence: {
-          allowEmpty: false,
-        },
+          allowEmpty: false
+        }
       },
       email: {
         presence: {
-          allowEmpty: false,
+          allowEmpty: false
         },
         email: true
       },
       password: {
         presence: {
-          allowEmpty: false,
+          allowEmpty: false
         },
         format: {
-          pattern: "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$",
-          message: 'must be 8 characters long and contain big, small letters, digits, and special characters'
+          pattern: "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^ws]).{8,}$",
+          message:
+            "must be 8 characters long and contain big, small letters, digits, and special characters"
+        }
+      },
+      inviteCode: {
+        presence: {
+          allowEmpty: false
         }
       }
     };
 
-    const validationErrors = validate({
-      firstName: this.firstName,
-      lastName: this.lastName,
-      email: this.email,
-      password: this.password
-    }, constraints);
+    const validationErrors = validate(
+      {
+        firstName: this.firstName,
+        lastName: this.lastName,
+        email: this.email,
+        password: this.password,
+        inviteCode: this.inviteCode
+      },
+      constraints
+    );
 
-    let errors = '';
+    let errors = "";
 
-    if(validationErrors) {
+    if (validationErrors) {
       [
-        'firstName',
-        'lastName',
-        'email',
-        'password',
-        'confirmPassword',
+        "firstName",
+        "lastName",
+        "email",
+        "password",
+        "confirmPassword",
+        "inviteCode"
       ].map(field => {
-        if(validationErrors[field]) {
-          if(errors) {
-            errors += ' \n';
+        if (validationErrors[field]) {
+          if (errors) {
+            errors += " \n";
           }
           errors += validationErrors[field];
         }
-      })
+      });
 
-      if(errors) {
+      if (errors) {
         this.showError(errors);
       }
 
       return;
     }
 
-    this.sessionService.register({
-      firstName: this.firstName,
-      lastName: this.lastName,
-      email: this.email,
-      password: this.password
-    }).subscribe(result => {
-      if(!result.success) {
-        this.showError((result.errors && result.errors.full_messages) ? result.errors.full_messages[0] : 'Registration Error')
-      } else {
-        // redirect to home or dashboard page
-        this.signupFinished = true;
-      }
-    });
+    this.sessionService
+      .register({
+        firstName: this.firstName,
+        lastName: this.lastName,
+        email: this.email,
+        password: this.password,
+        inviteCode: this.inviteCode
+      })
+      .subscribe(result => {
+        console.log(result);
+        if (!result.success) {
+          this.showError(
+            result.errors && result.errors.full_messages
+              ? result.errors.full_messages[0]
+              : "Registration Error"
+          );
+        } else {
+          // redirect to home or dashboard page
+          this.signupFinished = true;
+        }
+      });
   }
 
   goToLogin() {
-    this.navCtrl.setPages([{ page: 'LoginPage'}]);
+    this.navCtrl.setPages([{ page: "LoginPage" }]);
   }
 
   showError(message) {
-    if(!this.errorToast) {
+    if (!this.errorToast) {
       this.errorToast = this.toastController.create({
         message,
-        cssClass: 'error-toast',
-        position: 'middle',
+        cssClass: "error-toast",
+        position: "middle",
         showCloseButton: true,
-        closeButtonText: 'OK',
+        closeButtonText: "OK"
       });
 
       this.errorToast.onDidDismiss(() => {
         this.errorToast = null;
       });
-      
+
       this.errorToast.present();
     }
   }
-
 }

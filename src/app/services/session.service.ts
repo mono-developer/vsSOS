@@ -71,7 +71,8 @@ export class SessionService {
 
   login(user = {
     email: '',
-    password: ''
+    password: '',
+    inviteCode: ''
   }) {
     return this.http.post(URLS.api + URLS.session.login, user, {observe: 'response'}).map((data) => {
       const res = data.body['data'];
@@ -86,7 +87,8 @@ export class SessionService {
     firstName: '',
     lastName: '',
     email: '',
-    password: ''
+    password: '',
+    inviteCode: ''
   }) {
     return this.http.post(URLS.api + URLS.session.register, user, {observe: 'response'}).map((data) => {
       return {success: true};

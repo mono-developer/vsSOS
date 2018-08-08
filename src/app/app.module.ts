@@ -11,6 +11,7 @@ import { Network } from '@ionic-native/network';
 import { InAppPurchase2 } from '@ionic-native/in-app-purchase-2';
 import { Facebook } from '@ionic-native/facebook';
 import { Market } from "@ionic-native/market";
+import { Deeplinks } from "@ionic-native/deeplinks";
 
 import { IonicAudioModule, defaultAudioProviderFactory, WebAudioProvider } from 'ionic-audio';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
@@ -83,6 +84,7 @@ import { IonicStorageModule } from '@ionic/storage';
     Facebook,
     Market,
     HockeyApp,
+    Deeplinks,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: ExpiredInterceptor,

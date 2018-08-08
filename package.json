@@ -32,6 +32,7 @@
     "@angular/platform-browser": "5.0.3",
     "@angular/platform-browser-dynamic": "5.0.3",
     "@ionic-native/core": "4.4.0",
+    "@ionic-native/deeplinks": "^4.11.0",
     "@ionic-native/facebook": "^4.7.0",
     "@ionic-native/file": "^4.7.0",
     "@ionic-native/in-app-purchase-2": "^4.6.0",
@@ -49,7 +50,7 @@
     "cc.fovea.cordova.purchase": "^7.1.3",
     "cordova-android": "7.0.0",
     "cordova-android-support-gradle-release": "~1.4.2",
-    "cordova-ios": "4.5.4",
+    "cordova-ios": "4.5.5",
     "cordova-plugin-device": "^2.0.2",
     "cordova-plugin-facebook4": "^2.2.0",
     "cordova-plugin-file": "^6.0.1",
@@ -69,6 +70,7 @@
     "ionic-angular": "3.9.2",
     "ionic-audio": "^3.2.2",
     "ionic-hockeyapp": "^0.2.0",
+    "ionic-plugin-deeplinks": "^1.0.17",
     "ionicons": "3.0.0",
     "lodash": "^4.17.10",
     "lodash-decorators": "^5.0.0",
@@ -110,11 +112,29 @@
         "SENDER_ID": "653273040369",
         "653273040369": "11.6.3"
       },
-      "cordova-plugin-market": {}
+      "cordova-plugin-market": {},
+      "ionic-plugin-deeplinks": {
+        "URL_SCHEME": "sosmethodapp",
+        "DEEPLINK_SCHEME": "https",
+        "DEEPLINK_HOST": "sosmethodapp.com",
+        "ANDROID_PATH_PREFIX": "/",
+        "ANDROID_2_PATH_PREFIX": "/",
+        "ANDROID_3_PATH_PREFIX": "/",
+        "ANDROID_4_PATH_PREFIX": "/",
+        "ANDROID_5_PATH_PREFIX": "/",
+        "DEEPLINK_2_SCHEME": " ",
+        "DEEPLINK_2_HOST": " ",
+        "DEEPLINK_3_SCHEME": " ",
+        "DEEPLINK_3_HOST": " ",
+        "DEEPLINK_4_SCHEME": " ",
+        "DEEPLINK_4_HOST": " ",
+        "DEEPLINK_5_SCHEME": " ",
+        "DEEPLINK_5_HOST": " "
+      }
     },
     "platforms": [
-      "ios",
-      "android"
+      "android",
+      "ios"
     ]
   }
 }

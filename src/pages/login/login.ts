@@ -21,9 +21,10 @@ export class LoginPage {
 
   email: string;
   password: string;
+  inviteCode: string;
 
   errorToast: Toast;
-  
+
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -35,7 +36,7 @@ export class LoginPage {
   ) { }
 
   ionViewDidLoad() {
-    
+
   }
 
   ionViewWillLeave() {
@@ -52,10 +53,15 @@ export class LoginPage {
     this.password = change;
   }
 
+  inviteCodeChanged(change) {
+    this.inviteCode = change;
+  }
+
   login() {
     this.sessionService.login({
       email: this.email,
-      password: this.password
+      password: this.password,
+      inviteCode: this.inviteCode
     }).subscribe(result => {
       if(!result.success) {
         this.showError('Invalid login credentials. Please try again.');
@@ -106,7 +112,7 @@ export class LoginPage {
       this.errorToast.onDidDismiss(() => {
         this.errorToast = null;
       });
-      
+
       this.errorToast.present();
     }
   }
