@@ -18,7 +18,10 @@ export class SessionService {
   private _hasSubscription = new BehaviorSubject(false);
   hasSubscription = this._hasSubscription.asObservable();
 
-  constructor(private http: HttpClient, private common: CommonService) { }
+  constructor(
+    private http: HttpClient,
+    private common: CommonService
+  ) { }
 
   currentUser() {
     return this.http.get(URLS.api + URLS.session.currentUser, { headers: this.common.getHeaders() })
@@ -26,7 +29,7 @@ export class SessionService {
         this._hasSubscription.next(data['user'] && data['user'].current_subscription);
         return data as any;
       });
-  }
+    }
 
   get isLog(): boolean {
     return this._isLog;
@@ -64,6 +67,8 @@ export class SessionService {
       }).map(data => data as any);
   }
 
+
+
   logout() {
     this.common.logout();
     this._hasSubscription.next(false);
@@ -77,7 +82,7 @@ export class SessionService {
     return this.http.post(URLS.api + URLS.session.login, user, {observe: 'response'}).map((data) => {
       const res = data.body['data'];
       this.buildHeaders(data);
-      return {success: true, role: res.role };
+      return {success: true, role: res.role};
     }).catch(data => {
       return Observable.of({success: false, errors: data.error['errors'] });
     }).map(data => data as any);
@@ -110,6 +115,30 @@ export class SessionService {
     }).catch(data => {
       return Observable.of({success: false, errors: data.error['errors']});
     }).map(data => data as any);
+  }
+
+  tenantInfo() {
+    let token = this.common.getData('headers')['access-token'];
+    console.log('token', token);
+    return this.http.get(URLS.api + URLS.tenant.info + '?access_token=' + token, { observe: 'response' })
+      .map(data => {
+        console.log('data', data)
+        return data;
+      }).catch(data => {
+        return Observable.of({ success: false, errors: data.error['errors'] });
+      }).map(data => data as any);
+  }
+
+  tenantUrl() {
+    let uuid = this.common.getDeviceUUID();
+    console.log('uuid', uuid);
+    return this.http.get(URLS.api + URLS.tenant.url + '?uuid=' + uuid, { observe: 'response' })
+      .map(data => {
+        console.log('data', data)
+        return data;
+      }).catch(data => {
+        return Observable.of({ success: false, errors: data.error['errors'] });
+      }).map(data => data as any);
   }
 
   private buildHeaders(data) {

@@ -63,6 +63,9 @@ export class LoginPage {
       password: this.password,
       inviteCode: this.inviteCode
     }).subscribe(result => {
+      console.log('result', result);
+      this.getTenantInfoData();
+      this.getTenantURLData();
       if(!result.success) {
         this.showError('Invalid login credentials. Please try again.');
       } else {
@@ -115,5 +118,17 @@ export class LoginPage {
 
       this.errorToast.present();
     }
+  }
+
+  getTenantInfoData() {
+    this.sessionService.tenantInfo().subscribe(result => {
+      console.log('result', result);
+    });
+  }
+
+  getTenantURLData() {
+    this.sessionService.tenantUrl().subscribe(result => {
+      console.log('result', result);
+    })
   }
 }

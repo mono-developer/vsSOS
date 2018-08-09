@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
+import { Device } from '@ionic-native/device';
 import { HttpHeaders } from '@angular/common/http';
 import 'rxjs/add/operator/map';
 import { pick } from '../utils/pick';
@@ -17,7 +18,9 @@ export class CommonService {
   private _loggedOut = new Subject();
   loggedOut = this._loggedOut.asObservable();
 
-  constructor() { }
+  constructor(private device: Device) {
+    console.log('uuid', device.uuid);
+  }
 
   emitChange(myMessage: any) {
     this.emitChangeSource.next(myMessage);
@@ -106,6 +109,11 @@ export class CommonService {
       const result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
       return result * sortOrder;
     };
+  }
+
+  getDeviceUUID() {
+    console.log('UUID', this.device.uuid);
+    return this.device.uuid
   }
 
 }
