@@ -27,6 +27,15 @@
       ></ion-input>
     </div>
 
+    <div>
+      <ion-input
+        type="text"
+        placeholder="Invite Code"
+        (change)="inviteCodeChanged($event.target.value)"
+      ></ion-input>
+    </div>
+
+
     <div class="text-center">
       <a href="https://sosmethod-backend.herokuapp.com/auth/password/new" target="_blank">Forgot your password?</a>
     </div>

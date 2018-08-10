@@ -82,7 +82,7 @@ function getApiBase() {
   // if (environment.production) {
   //   url = 'https://sosmethod-backend.herokuapp.com';
   // }
-  return url;
+  // return url;
 }
 
 export { URLS }

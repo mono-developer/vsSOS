@@ -206,7 +206,6 @@ export class SignupPage {
 
   getTenantsInfo (code) {
     this.sessionService.tenantsInfo(code).subscribe(result => {
-      let tenant_uuid = result.body.uuid;
       let tenant_url = result.body.url;
       localStorage.setItem('tenant_uuid', result.body.uuid);
       this.doRegister(tenant_url);

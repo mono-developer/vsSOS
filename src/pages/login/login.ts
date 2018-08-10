@@ -14,13 +14,13 @@ import { Storage } from '@ionic/storage';
 
 @IonicPage()
 @Component({
-  selector: 'page-login',
-  templateUrl: 'login.html',
+  selector: "page-login",
+  templateUrl: "login.html"
 })
 export class LoginPage {
-
   email: string;
   password: string;
+  invite_code: string;
   uuid: string;
   device_name: string;
 
@@ -36,28 +36,28 @@ export class LoginPage {
     public platform: Platform,
     public device: Device
   ) {
+    localStorage.removeItem('base_url');
     this.uuid = localStorage.getItem('tenant_uuid');
-    this.platform.ready().then( () => {
-        if(this.platform.is('ios')) {
-          this.device_name = this.device.model;
-        }else if (this.platform.is('android')) {
-          this.device_name = (window as any).device.name;
-        } else {
-          this.device_name = '';
-        }
-        if(!this.device_name){
-          this.device_name = 'iphone7, 2';
-        }
-        
-      });
-   }
+    console.log('uuid', this.uuid);
+    this.platform.ready().then(() => {
+      if (this.platform.is("ios")) {
+        this.device_name = this.device.model;
+      } else if (this.platform.is("android")) {
+        this.device_name = (window as any).device.name;
+      } else {
+        this.device_name = "";
+      }
+      if (!this.device_name) {
+        this.device_name = "iphone7, 2";
+      }
+    });
+  }
 
   ionViewDidLoad() {
-
   }
 
   ionViewWillLeave() {
-    if(this.errorToast) {
+    if (this.errorToast) {
       this.errorToast.dismissAll();
     }
   }
@@ -70,16 +70,40 @@ export class LoginPage {
     this.password = change;
   }
 
-  login() {
-    this.getTenantsURL();
+  inviteCodeChanged(change) {
+    this.invite_code = change;
   }
 
-  getTenantsURL () {
-    this.sessionService.tenantsURL(this.uuid).subscribe(result => {
+  login() {
+    if(this.invite_code == undefined || !this.invite_code) {
+      console.log('111');
+      this.getTenantsURL(this.uuid);
+    }else{
+      console.log("222");
+      this.getTenantsInfo(this.invite_code);
+    }    
+  }
+
+  getTenantsURL(uuid) {
+    if (!uuid) {
+      this.showError("Tenant UUID is undefined. Please enter invite code");
+    } else {
+      this.sessionService.tenantsURL(uuid).subscribe(result => {
+        let url = result.body.url;
+        localStorage.setItem("tenant_uuid", result.body.uuid);
+        localStorage.setItem("base_url", url);
+        this.doLogin(url);
+      });
+    }
+  }
+
+  getTenantsInfo(code) {
+    this.sessionService.tenantsInfo(code).subscribe(result => {
       let url = result.body.url;
-      localStorage.setItem('base_url', url);
-      this.doLogin(url)
-    });
+      localStorage.setItem("tenant_uuid", result.body.uuid);
+      localStorage.setItem("base_url", url);
+      this.doLogin(url);
+    });    
   }
 
   doLogin(url) {
@@ -87,54 +111,54 @@ export class LoginPage {
       email: this.email,
       password: this.password,
       device_name: this.device_name
-    }
+    };
     this.sessionService.login(user_info, url).subscribe(result => {
-      if(!result.success) {
-        this.showError('Invalid login credentials. Please try again.');
+      if (!result.success) {
+        this.showError("Invalid login credentials. Please try again.");
       } else {
-        this.showError('Success.');
-        this.navCtrl.setRoot('PushPopupPage');
-
+        this.navCtrl.setRoot("PushPopupPage");
       }
     });
   }
 
   loginWithFacebook() {
-    this.fb.login(['public_profile', 'email'])
+    this.fb
+      .login(["public_profile", "email"])
       .then((fbres: FacebookLoginResponse) => {
         // log into api with response
-        if(fbres.authResponse) {
-          this.sessionService.facebook(fbres.authResponse.accessToken)
+        if (fbres.authResponse) {
+          this.sessionService
+            .facebook(fbres.authResponse.accessToken)
             .subscribe(res => {
-              if(res['status'] === 'success' || res['success'] === true) {
-                this.navCtrl.setRoot('PushPopupPage');
+              if (res["status"] === "success" || res["success"] === true) {
+                this.navCtrl.setRoot("PushPopupPage");
               } else {
-                this.showError('There was an error logging in with Facebook.');
+                this.showError("There was an error logging in with Facebook.");
               }
             });
         } else {
           // let the catch below handle it
-          throw new Error('Invalid FB Response');
+          throw new Error("Invalid FB Response");
         }
       })
       .catch(e => {
-        console.log('Error logging in with Facebook', e);
-        this.showError('There was an error logging in with Facebook.');
+        console.log("Error logging in with Facebook", e);
+        this.showError("There was an error logging in with Facebook.");
       });
   }
 
   goToSignup() {
-    this.navCtrl.setPages([{ page: 'SignupPage'}]);
+    this.navCtrl.setPages([{ page: "SignupPage" }]);
   }
 
   showError(message) {
-    if(!this.errorToast) {
+    if (!this.errorToast) {
       this.errorToast = this.toastController.create({
         message,
-        cssClass: 'error-toast',
-        position: 'middle',
+        cssClass: "error-toast",
+        position: "middle",
         showCloseButton: true,
-        closeButtonText: 'OK',
+        closeButtonText: "OK"
       });
 
       this.errorToast.onDidDismiss(() => {
@@ -144,6 +168,4 @@ export class LoginPage {
       this.errorToast.present();
     }
   }
-
-  
 }
