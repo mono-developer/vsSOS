@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-version="40" id="co.sosmethod.mobile.stage" version="0.0.40" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>SOS Stage</name>
+<widget android-version="40" id="co.sosmethod.mobile.dev" version="0.0.40" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>SOS Dev</name>
     <description>Get your power back.</description>
     <author email="hello@sosmethod.co" href="http://sosmethod.co">SOS Method</author>
     <content src="index.html" />
@@ -124,6 +124,7 @@
         <variable name="DEEPLINK_SCHEME" value="https" />
         <variable name="DEEPLINK_HOST" value="sosmethod.com" />
     </plugin>
-    <engine name="ios" spec="~4.5.5" />
     <plugin name="cordova-plugin-device" spec="^2.0.2" />
+    <plugin name="cordova-plugin-device-name" spec="^1.3.4" />
+    <engine name="ios" spec="~4.5.5" />
 </widget>

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ToastController, Toast, Platform } from 'ionic-angular';
 import { Facebook, FacebookLoginResponse } from '@ionic-native/facebook';
-
+import { Device } from '@ionic-native/device';
 import { SessionService } from './../../app/services/session.service';
 import { Storage } from '@ionic/storage';
 
@@ -21,7 +21,8 @@ export class LoginPage {
 
   email: string;
   password: string;
-  inviteCode: string;
+  uuid: string;
+  device_name: string;
 
   errorToast: Toast;
 
@@ -33,7 +34,23 @@ export class LoginPage {
     private fb: Facebook,
     public storage: Storage,
     public platform: Platform,
-  ) { }
+    public device: Device
+  ) {
+    this.uuid = localStorage.getItem('tenant_uuid');
+    this.platform.ready().then( () => {
+        if(this.platform.is('ios')) {
+          this.device_name = this.device.model;
+        }else if (this.platform.is('android')) {
+          this.device_name = (window as any).device.name;
+        } else {
+          this.device_name = '';
+        }
+        if(!this.device_name){
+          this.device_name = 'iphone7, 2';
+        }
+        
+      });
+   }
 
   ionViewDidLoad() {
 
@@ -53,23 +70,31 @@ export class LoginPage {
     this.password = change;
   }
 
-  inviteCodeChanged(change) {
-    this.inviteCode = change;
+  login() {
+    this.getTenantsURL();
   }
 
-  login() {
-    this.sessionService.login({
+  getTenantsURL () {
+    this.sessionService.tenantsURL(this.uuid).subscribe(result => {
+      let url = result.body.url;
+      localStorage.setItem('base_url', url);
+      this.doLogin(url)
+    });
+  }
+
+  doLogin(url) {
+    let user_info = {
       email: this.email,
       password: this.password,
-      inviteCode: this.inviteCode
-    }).subscribe(result => {
-      console.log('result', result);
-      this.getTenantInfoData();
-      this.getTenantURLData();
+      device_name: this.device_name
+    }
+    this.sessionService.login(user_info, url).subscribe(result => {
       if(!result.success) {
         this.showError('Invalid login credentials. Please try again.');
       } else {
+        this.showError('Success.');
         this.navCtrl.setRoot('PushPopupPage');
+
       }
     });
   }
@@ -120,15 +145,5 @@ export class LoginPage {
     }
   }
 
-  getTenantInfoData() {
-    this.sessionService.tenantInfo().subscribe(result => {
-      console.log('result', result);
-    });
-  }
-
-  getTenantURLData() {
-    this.sessionService.tenantUrl().subscribe(result => {
-      console.log('result', result);
-    })
-  }
+  
 }

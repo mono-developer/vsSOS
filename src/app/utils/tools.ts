@@ -2,16 +2,16 @@
 import { pick } from './pick';
 import { ENV } from '@app/env';
 
-const apiVer = '/v1';
+const apiVer = '/v2';
 
 const URLS = {
-  // api: getApiBase(),
-  api: ENV.URL,
+  api: getApiBase(),
+  // api: ENV.URL,
   dashboard: apiVer + "/dashboard/all",
   session: {
-    register: "/user",
+    register: apiVer + "/auth/register",
     facebook: apiVer + "/auth/facebook",
-    login: "/user/sign_in",
+    login: apiVer + "/auth/login",
     confirmation: "/user/confirmation",
     currentUser: apiVer + "/user/current"
   },
@@ -47,9 +47,7 @@ const URLS = {
   },
   tenant: {
     info: apiVer + "/tenants/info",
-    url: apiVer + 'tenants/url'
-
-
+    url: apiVer + "/tenants/url"
   }
 };
 
@@ -71,10 +69,16 @@ function generateCRUD(label, only = [], except = [], includes = []) {
 }
 
 function getApiBase() {
+  const url = 'https://sosmethod-backend-dev.herokuapp.com';
   //prod
-  let url = 'https://sosmethod-backend.herokuapp.com';
+  // let url = 'https://sosmethod-backend.herokuapp.com';
   // dev
-  // let url = 'https://sosmethod-backend-dev.herokuapp.com';
+  const base_url = localStorage.getItem('base_url')
+  if(!base_url) {
+    return url;
+  }
+  
+  return base_url;
   // if (environment.production) {
   //   url = 'https://sosmethod-backend.herokuapp.com';
   // }

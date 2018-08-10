@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ToastController, Toast, Platform } from 'ionic-angular';
 import { Facebook, FacebookLoginResponse } from '@ionic-native/facebook';
+import { Device } from '@ionic-native/device';
 
 import { SessionService } from './../../app/services/session.service';
 import { Storage } from '@ionic/storage';
 import validate from 'validate.js';
+import * as _ from 'lodash';
 
 @IonicPage()
 @Component({
@@ -12,11 +14,14 @@ import validate from 'validate.js';
   templateUrl: "signup.html"
 })
 export class SignupPage {
-  firstName: string;
-  lastName: string;
+
+  first_name: string;
+  last_name: string;
   email: string;
-  password: string;
-  inviteCode: string;
+  password: string;  
+  device_name: string;
+  nickname: string;
+  invite_code: string;
   confirmPassword: string;
   signupFinished = false;
 
@@ -29,8 +34,23 @@ export class SignupPage {
     private toastController: ToastController,
     private fb: Facebook,
     public storage: Storage,
-    public platform: Platform
-  ) {}
+    public platform: Platform,
+    public device: Device
+  ) {
+    this.platform.ready().then( () => {
+        if(this.platform.is('ios')) {
+          this.device_name = this.device.model;
+        }else if (this.platform.is('android')) {
+          this.device_name = (window as any).device.name;
+        } else {
+          this.device_name = '';
+        }
+        if(!this.device_name){
+          this.device_name = 'iphone7, 2';
+        }
+      });
+
+  }
 
   ionViewDidLoad() {
     console.log("ionViewDidLoad LoginPage");
@@ -51,11 +71,15 @@ export class SignupPage {
   }
 
   firstNameChanged(change) {
-    this.firstName = change;
+    this.first_name = change;
   }
 
   lastNameChanged(change) {
-    this.lastName = change;
+    this.last_name = change;
+  }
+
+   nicknameChanged(change) {
+    this.nickname = change;
   }
 
   emailChanged(change) {
@@ -67,7 +91,7 @@ export class SignupPage {
   }
 
   inviteCodeChanged(change) {
-    this.inviteCode = change;
+    this.invite_code = change;
   }
 
   signupWithFacebook() {
@@ -99,17 +123,23 @@ export class SignupPage {
 
   signup() {
     // perform validation
+
     const constraints = {
-      firstName: {
-        presence: {
-          allowEmpty: false
-        }
-      },
-      lastName: {
-        presence: {
-          allowEmpty: false
-        }
-      },
+      // first_name: {
+      //   presence: {
+      //     allowEmpty: true
+      //   }
+      // },
+      // last_name: {
+      //   presence: {
+      //     allowEmpty: true
+      //   }
+      // },
+      // nickname: {
+      //   presence: {
+      //     allowEmpty: true
+      //   }
+      // },
       email: {
         presence: {
           allowEmpty: false
@@ -126,20 +156,20 @@ export class SignupPage {
             "must be 8 characters long and contain big, small letters, digits, and special characters"
         }
       },
-      inviteCode: {
+      invite_code: {
         presence: {
           allowEmpty: false
         }
       }
     };
-
     const validationErrors = validate(
       {
-        firstName: this.firstName,
-        lastName: this.lastName,
+        // first_name: this.first_name,
+        // last_name: this.last_name,
+        // nickname: this.nickname,
         email: this.email,
         password: this.password,
-        inviteCode: this.inviteCode
+        invite_code: this.invite_code
       },
       constraints
     );
@@ -147,13 +177,13 @@ export class SignupPage {
     let errors = "";
 
     if (validationErrors) {
-      [
-        "firstName",
-        "lastName",
+      [  
+        // "first_name",
+        // "last_name",
+        // "nickname",
         "email",
         "password",
-        "confirmPassword",
-        "inviteCode"
+        "invite_code"
       ].map(field => {
         if (validationErrors[field]) {
           if (errors) {
@@ -170,16 +200,34 @@ export class SignupPage {
       return;
     }
 
-    this.sessionService
-      .register({
-        firstName: this.firstName,
-        lastName: this.lastName,
-        email: this.email,
-        password: this.password,
-        inviteCode: this.inviteCode
-      })
-      .subscribe(result => {
-        console.log(result);
+    this.getTenantsInfo(this.invite_code);
+
+  }
+
+  getTenantsInfo (code) {
+    this.sessionService.tenantsInfo(code).subscribe(result => {
+      let tenant_uuid = result.body.uuid;
+      let tenant_url = result.body.url;
+      localStorage.setItem('tenant_uuid', result.body.uuid);
+      this.doRegister(tenant_url);
+    });
+  }
+
+
+  doRegister(url) {
+    let user_data = {
+      first_name: this.first_name,
+      last_name: this.first_name,
+      nickname: this.nickname,
+      email: this.email,
+      password: this.password,        
+      device_name: this.device_name
+    }
+
+    let user_body = _.pickBy(user_data, _.identity);
+
+    this.sessionService.register(user_body, url).subscribe(result => {
+
         if (!result.success) {
           this.showError(
             result.errors && result.errors.full_messages
@@ -187,7 +235,7 @@ export class SignupPage {
               : "Registration Error"
           );
         } else {
-          // redirect to home or dashboard page
+          // redirect to home or dashboard page       
           this.signupFinished = true;
         }
       });
@@ -214,4 +262,6 @@ export class SignupPage {
       this.errorToast.present();
     }
   }
+
+ 
 }
