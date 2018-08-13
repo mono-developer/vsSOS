@@ -135,15 +135,33 @@ export class MyApp {
       /** Deep Link Start */
 
       this.deeplinks.routeWithNavController(this.nav, {
-          "/empwoser": "EmpowerPage",
-          "/login": "LoginPage",
-          "/signup": "SignupPage"
-        })
+        "/empwoser": "EmpowerPage",
+        "/program:id": "ProgramPage",
+        "/signup": "SignupPage"
+      })
         .subscribe(match => {
-          // match.$route - the route we matched, which is the matched entry from the arguments to route()
-          // match.$args - the args passed in the link
-          // match.$link - the full link data
-          console.log("Successfully matched route", JSON.stringify(match));
+          const path_link = match.$link;
+
+          setTimeout(() => {
+            if (path_link.host == 'empwoser') {
+              this.nav.setRoot('EmpowerPage');
+            } else if (path_link.queryString == 'essentials') {
+              this.nav.setRoot('ProgramPage', {
+                programClassId: '24',
+                programType: 'essentials',
+                programId: '22'
+              })
+            } else if (path_link.queryString == 'meditation') {
+              this.nav.setRoot('ProgramPage', {
+                programClassId: '38',
+                programType: 'meditation',
+                programId: '29'
+              })
+            } else {
+              console.log('error');
+            }
+          }, 1000);
+
         }, nomatch => {
           // nomatch.$link - the full link data
           console.error("Got a deeplink that didn't match", nomatch);
@@ -239,6 +257,6 @@ export class MyApp {
       });
     });
 
-    
+
   }
 }

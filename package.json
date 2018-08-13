@@ -114,12 +114,12 @@
         "653273040369": "11.6.3"
       },
       "cordova-plugin-market": {},
+      "cordova-plugin-device-name": {},
       "ionic-plugin-deeplinks": {
         "URL_SCHEME": "sosmethodapp",
         "DEEPLINK_SCHEME": "https",
-        "DEEPLINK_HOST": "sosmethod.com"
-      },
-      "cordova-plugin-device-name": {}
+        "DEEPLINK_HOST": "sosmethodapp.com"
+      }
     },
     "platforms": [
       "ios"
